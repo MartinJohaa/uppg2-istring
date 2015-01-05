@@ -171,6 +171,22 @@ char *istring_to_string(const char *str) {
  size_t istrfixlen(char *s); {
  }
 */
+
+/*
+ * Inspects the length of the string from str and if it differs from
+ * length, updates length accordingly. If str does not contain a \0
+ * token, it will be inserted at the first element which is not a
+ * printable ascii character, and length updated accordingly. This
+ * function must be as efficient as possible and not rescan the string
+ * if it can be avoided.
+ *
+ * This function is useful when istrings have been manipulated as
+ * regular C strings, to reestablish the length invariant.
+ */
+size_t istrfixlen(char *s);
+
+
+
 /*
  * Sets the length of an istring and inserts a corresponding '\0'
  * character. If the length argument is out of bounds for the string,
@@ -287,4 +303,25 @@ size_t istrlen(const char *s) {
   size_t length = (s[0] - '0') * 1000 + (s[1] - '0') * 100 + (s[2] - '0') * 10
     + (s[3] - '0');
   return length;
+}
+
+
+/*
+ * I nedanstående funktioner är dst en pekare till en vanlig
+ * sträng och inte en istring. Däremot skall minnesutrymmet
+ * "konverteras" till en istring av funktionerna, d.v.s. efter att
+ * t.ex. istrcpy anropats bör man vid anropsplatsen göra dst =
+ * STRING(dst) för att hoppa över längd-delen av strängen.
+*/
+char *istrcpy(char *dst, const char *src);{
+  
+}
+char *istrncpy(char *dst, const char *src, size_t n);{
+  
+}
+char *istrcat(char *dst, const char *src);{
+  
+}
+char *istrncat(char *dst, const char *src, size_t n);{
+  
 }
