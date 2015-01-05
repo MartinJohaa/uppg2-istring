@@ -183,8 +183,17 @@ char *istring_to_string(const char *str) {
  * This function is useful when istrings have been manipulated as
  * regular C strings, to reestablish the length invariant.
  */
-size_t istrfixlen(char *s);
+size_t istrfixlen(char *s) {
+  if (strlen(s) != istrlen(s)) {
+    istrslen(s, strlen(s)-istrlen(s));
+  }
+  if (*(s+istrlen(s)) != '\0') {
+    *(s+istrlen(s)) = '\0';
+    istrslen(s, istrlen(s)+1);
+  }
 
+  return istrlen(s);
+}
 
 
 /*
@@ -313,15 +322,19 @@ size_t istrlen(const char *s) {
  * t.ex. istrcpy anropats bör man vid anropsplatsen göra dst =
  * STRING(dst) för att hoppa över längd-delen av strängen.
 */
-char *istrcpy(char *dst, const char *src);{
+/*char *istrcpy(char *dst, const char *src);{
   
 }
 char *istrncpy(char *dst, const char *src, size_t n);{
   
-}
+}*/
 char *istrcat(char *dst, const char *src);{
-  
+  char *concat = strcat(dst, src);
+  char *result = istring_mk(concat);
+  return result;
 }
 char *istrncat(char *dst, const char *src, size_t n);{
-  
+  char *concat = strncat(dst, src, n);
+  char *result = istring_mk(concat);
+  return result;  
 }
