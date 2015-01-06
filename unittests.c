@@ -3,6 +3,8 @@
 #include "istring.h"
 //#include "istring_rep.h"
 #include <stdlib.h>
+#define START(p) (p += sizeof(char)*4)
+#define STRING(p) (p -= sizeof(char)*4)
 
 int init_suite_1(void)
 {
@@ -54,7 +56,7 @@ void testISTRLEN(void)
   char *str2 = istring_mk("ekieki");
   CU_ASSERT(istrlen(str1) == 4);
   CU_ASSERT(istrlen(str2) == 6);
-  //START(str2)->length = 3;
+  START(str2)->length = 3;
   CU_ASSERT(istrlen(str2) == 3);
   CU_ASSERT(strlen(str2) == 6);
   //istring_rm(str1);
