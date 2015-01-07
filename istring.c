@@ -18,6 +18,7 @@ int istrncmp(const char *s1, const char *s2, size_t n);
 char *istrchr(const char *s, int c);
 char *istrrchr(const char *s, int c);
 char* istrslen(char *s, size_t length);
+/*
 int main() {
 	char *string = "Test";
 	char *string2 = "TestMedium1111111";
@@ -45,7 +46,7 @@ int main() {
 	char *str2 = istring_mk("bcde");
 	char *str3 = istring_mk("abcdcef");
 	char *str4 = istring_mk("abdc");
-        char *chrprint = istrchr(str3, ctest);
+        //      char *chrprint = istrchr(str3, ctest);
 	// Skolans tester
 	char *str5 = istring_mk(NULL);
 	printf("Is str5 null? (1:yes, 0:no): %d\n", (str5 == NULL));
@@ -72,10 +73,10 @@ int main() {
 			istrncmp(str1, str4, 2));
 	printf("%s N-compared with %s, 3 chars, returns: %d\n", str1, str4,
 			istrncmp(str1, str4, 3));
-	printf("Search %s for %c. Printed: %s\n", str3, ctest,
-			chrprint);
-	printf("Search Reverse %s for %c. Printed: %s\n", str3, ctest,
-			chrprint);
+	//rintf("Search %s for %c. Printed: %s\n", str3, ctest,
+        //	chrprint);
+//printf("Search Reverse %s for %c. Printed: %s\n", str3, ctest,
+	//		chrprint);
 	// Allocate istrings in memory
 	char *ASDF = istring_mk(string);
 	char *ASDF2 = istring_mk(string2);
@@ -121,7 +122,7 @@ int main() {
 	 printf("%c ", ASDF4[i]);
 	 }
 	 printf("\n");
-	 */
+	 
 	// Deallocate strings to free memory
 	// istring_rm(string);
 	// istring_rm(string2);
@@ -139,10 +140,10 @@ int main() {
 	istring_rm(ASDF2);
 	istring_rm(ASDF3);
 	istring_rm(ASDF4);
-        istring_rm(ASDFstring);
-        istring_rm(chrprint);
+        free(ASDFstring);
+        //istring_rm(chrprint);
 	return 0;
-}
+        }*/
 
 /* Allocate memory for temp, where the length of str and the string
  str will be stored and returned. length is the length of str.
@@ -161,9 +162,11 @@ char *istring_mk(const char* str) {
  * Deallocates str from memory
  */
 void istring_rm(char *str) {
+  if (str != NULL){
 	START(str);
-	printf("Removed: %p\n", str);
+	//printf("Removed: %p\n", str);
 	free(str);
+  }
 }
 /*
  * Takes istring str, allocates memory for a new array temp,
@@ -190,16 +193,35 @@ char *istring_to_string(const char *str) {
  * regular C strings, to reestablish the length invariant.
  */
 size_t istrfixlen(char *s) {
-	if (strlen(s) != istrlen(s)) {
-		istrslen(s, strlen(s) - istrlen(s));
-	}
+  char newLength[4] = "0000";
+  int newLengthInt = strlen(s);
+  
+  char buffer[4] = "0000";
+ 
+  int place = newLengthInt;
+  sprintf(buffer, "%d", place);
+  int count = 3;
+   for (int i = strlen(buffer); i > 0; i--)
+    {
+      newLength[count] = buffer[i-1];
+      count--;
+      }
+     START(s);
+     for (int i = 3; i >= 0; i--)
+       {
+         s[i] = newLength[i];
+       }
+     STRING(s);
+  
+  
+	
 	// Might have to free s and malloc again to ensure
 	// that we work with memory that we own
-	if (*(s + istrlen(s)) != '\0') {
-		*(s + istrlen(s)) = '\0';
-		istrslen(s, istrlen(s) + 1);
-	}
-
+	if (*(s + strlen(s)) != '\0') {
+		*(s + strlen(s)) = '\0';
+		istrslen(s, strlen(s) + 1);
+        }
+        
 	return istrlen(s);
 }
 /*
@@ -259,29 +281,37 @@ char* istrslen(char *s, size_t length) {
 	}
 }
 char *istrrchr(const char *s, int c) {
-	int length = (strlen(s) + 1) + 4;
-	char *temp = malloc(length);
-	for (int i = 0; i < length; i++) {
-		temp[i] = s[i];
+	int length = strlen(s);
+	int lengthcpy = length + 1;
+	for (; length >= 0; length--) {
+		if ((s[length]) == c)
+			break;
 	}
-	for (int i = length; i >= 4; i--) {
-		if ((s[i]) == c)
-			return (temp + i);
+	if(length == -1)
+		return NULL;
+	char *temp = malloc(lengthcpy - length);
+	for (int i = length, j = 0; i < lengthcpy; i++, j++) {
+		temp[j] = s[i];
 	}
-	return NULL;
+	return temp;
 }
+
 char *istrchr(const char *s, int c) {
-	int length = (strlen(s) + 1) + 4;
-	char *temp = malloc(length);
-	for (int i = 0; i < length; i++) {
-		temp[i] = s[i];
+	int length = 0;
+	int maxlen = strlen(s);
+	for (; length <= maxlen; length++) {
+		if ((s[length]) == c)
+			break;
 	}
-	for (int i = 0; s[i] != '\0'; i++) {
-		if ((s[i]) == c)
-			return (temp + i);
+	if(length == maxlen+1)
+		return NULL;
+	char *temp = malloc(maxlen-length+1);
+	for (int i = length, j = 0; i <= maxlen; i++, j++) {
+		temp[j] = s[i];
 	}
-	return NULL;
+	return temp;
 }
+
 int istrncmp(const char *s1, const char *s2, size_t n) {
 	int x = 0;
 	for (int i = 0; i < (n - 1) && s1[i] != '\0' && s2[i] != '\0'; i++) {
@@ -337,12 +367,60 @@ char *istrncpy(char *dst, const char *src, size_t n);{
   
 }*/
 char *istrcat(char *dst, const char *src) {
-  char *concat = strcat(dst, src);
-  char *result = istring_mk(concat);
+  START(src);
+  char *result = malloc(sizeof(dst) + sizeof(src) + 1);
+  int i = 0;
+  int j = 0;
+  int k = 0;
+  for (; i < 4; i++, k++) {
+      result[i] = src[k];
+    }
+
+  for (; j < strlen(dst); i++, j++) {
+    result[i] = dst[j];
+  }
+  
+  for (; k <= strlen(src); i++, k++) {
+    result[i] = src[k];
+  }
+  
+  istrfixlen(STRING(result));
+  
   return result;
 }
+
 char *istrncat(char *dst, const char *src, size_t n) {
-  char *concat = strncat(dst, src, n);
-  char *result = istring_mk(concat);
-  return result;  
+  START(src);
+  char *result = malloc(sizeof(dst) + n + 1);
+  
+  int i = 0;
+  int j = 0;
+  int k = 0;
+
+  for (; i < 4; i++, k++) {
+    result[i] = src[k];
+  }
+  
+  for (; j < strlen(dst); i++, j++) {
+    result[i] = dst[j];
+    }
+  STRING(src);
+  if (n > strlen) {
+    for (; k <= strlen(src); i++, k++) {
+    result[i] = src[k];
+  }
+  }else{
+    START(src);
+    for (int nummer = 0; nummer < n; nummer++, i++, k++)
+      {
+        result[i] = src[k];
+      }
+    //src[k] = '\0';
+    STRING(src);
+  }
+  
+  istrfixlen(STRING(result));
+
+  return result;
+
 }
