@@ -149,6 +149,12 @@ int main() {
  str will be stored and returned. length is the length of str.
  lenarray is the array where the length is stored temporarily.
  */
+
+///
+/// Creates an istring.
+///
+/// @parem the string to be converted into an istring.
+/// @return a pointer to the created istring.
 char *istring_mk(const char* str) {
 	int length = (str == NULL) ? 0 : strlen(str);
 	if (str == NULL || length > 9999) { // String str was empty or longer than 9999 characters
@@ -161,6 +167,11 @@ char *istring_mk(const char* str) {
 /*
  * Deallocates str from memory
  */
+
+///
+/// Deletes an istring.
+///
+/// @parem the istring to be deleted
 void istring_rm(char *str) {
   if (str != NULL){
 	START(str);
@@ -173,6 +184,12 @@ void istring_rm(char *str) {
  * copies str to temp, moves pointer 4 chars with START macro,
  * returns temp as string type.
  */
+
+///
+/// Converts an istring to a "normal" string. 
+///
+/// @parem the istring to be converted.
+/// @return a pointer to the new string.
 char *istring_to_string(const char *str) {
 	int length = (strlen(str) + 1) + 4;
 	char *temp = malloc(length);
@@ -192,6 +209,12 @@ char *istring_to_string(const char *str) {
  * This function is useful when istrings have been manipulated as
  * regular C strings, to reestablish the length invariant.
  */
+
+///
+/// Checks if the length-numbers of an istring is correct, if not correct it updated the numbers.
+///
+/// @parem the istring to be checked.
+/// @return the length of the updated istring.
 size_t istrfixlen(char *s) {
   char newLength[4] = "0000";
   int newLengthInt = strlen(s);
@@ -231,6 +254,13 @@ size_t istrfixlen(char *s) {
  * string. The last character of the original string will be repeated
  * to fill the string to its given length.
  */
+
+///
+/// Adds length in a 4-numberformat before the string s.
+///
+/// @parem the string witch length should be added.
+/// @parem the length to be added before s.
+/// @return a pointer to the string with the length added.
 char* istrslen(char *s, size_t length) {
 	char lenarray[5];
 	char *temp = malloc((strlen(s) + 1) + 4);
@@ -280,6 +310,13 @@ char* istrslen(char *s, size_t length) {
 		return temp;
 	}
 }
+
+/// 
+/// Searching for the char c in the istring s beginning from the end.
+/// 
+/// @parem the istring to be searched.
+/// @parem the ascii value of the char to be searched for.
+/// @return a pointer to the string beginning from the first character c (searched from the end) if it is found. Else NULL.
 char *istrrchr(const char *s, int c) {
 	int length = strlen(s);
 	int lengthcpy = length + 1;
@@ -296,6 +333,12 @@ char *istrrchr(const char *s, int c) {
 	return temp;
 }
 
+/// 
+/// Searching for the char c in the istring s.
+///
+/// @parem the istring to be searched.
+/// @parem the ascii value of the char to be searched for.
+/// @return a pointer to the string beginning from the character c if it is found. Else NULL.
 char *istrchr(const char *s, int c) {
 	int length = 0;
 	int maxlen = strlen(s);
@@ -311,7 +354,13 @@ char *istrchr(const char *s, int c) {
 	}
 	return temp;
 }
-
+///
+/// Compares the first n chars in s1 and s2.
+///
+/// @parem istring #1
+/// @parem istring #2
+/// @return 0 if the first n chars are equal, else bigger or less than zero.
+/// 
 int istrncmp(const char *s1, const char *s2, size_t n) {
 	int x = 0;
 	for (int i = 0; i < (n - 1) && s1[i] != '\0' && s2[i] != '\0'; i++) {
@@ -330,6 +379,13 @@ int istrncmp(const char *s1, const char *s2, size_t n) {
 		return 0;
 
 }
+
+///
+/// Compares 2 istrings.
+///
+/// @parem istring #1
+/// @parem istring #2
+/// @return 0 if the istrings are equal, else bigger or less than 0.
 int istrcmp(const char *s1, const char *s2) {
 	for (int i = 0; s1[i] != '\0' && s2[i] != '\0'; i++) {
 		if (s1[i] < s2[i])
@@ -345,10 +401,17 @@ int istrcmp(const char *s1, const char *s2) {
 	else
 		return 0;
 }
+
+///
+/// Checks the length of an istring
+///
+/// @parem pointer to the istring.
+/// @return the length of the istring s.
 size_t istrlen(const char *s) {
 	START(s);
 	size_t length = (s[0] - '0') * 1000 + (s[1] - '0') * 100 + (s[2] - '0') * 10
 			+ (s[3] - '0');
+        
 	return length;
 }
 
@@ -359,22 +422,69 @@ size_t istrlen(const char *s) {
  * "konverteras" till en istring av funktionerna, d.v.s. efter att
  * t.ex. istrcpy anropats bör man vid anropsplatsen göra dst =
  * STRING(dst) för att hoppa över längd-delen av strängen.
-*/
-/*char *istrcpy(char *dst, const char *src);{
-  
+ */
+
+///
+/// Makes a copy of src and puts it in dst.
+///
+/// @parem pointer to destination
+/// @parem pointer to source
+/// @return pointer to destination
+char *istrcpy(char *dst, const char *src) {
+  int length = istrlen(src) + 4 + 1;
+  if(strlen(dst) < istrlen(src)){
+    //printf("src is: %s\n", src);
+    return NULL;
+  }
+  START(src);
+  for (int i = 0; i < length; i++) {
+    dst[i] = src[i];
+  }
+  STRING(dst);
+  return dst;
 }
-char *istrncpy(char *dst, const char *src, size_t n);{
-  
-}*/
+
+///
+/// Makes a copy of the first n chars in src and puts it in dst.
+///
+/// @parem pointer to destination 
+/// @parem pointer to source
+/// @return pointer to destination
+char *istrncpy(char *dst, const char *src, size_t n){
+  int length = n + 4 + 1;
+  int dstlength = strlen(dst);
+  //printf("dstlength is: %d\n", dstlength);
+  int i = 0;
+  if(dstlength < length){
+    return NULL;
+  }
+  START(src);
+  for (; i < length-1; i++) {
+    dst[i] = src[i];
+  }
+  for (; i < dstlength; i++){
+    dst[i] = '\0';
+  }
+  //printf("%s\n", dst);
+  STRING(dst);
+  return dst;
+}
+///
+/// Appends the istring src to the string dst and updates the length.
+/// 
+/// @parem the destination string
+/// @parem the source istring
+/// @return a pointer to the concatted istring 
 char *istrcat(char *dst, const char *src) {
   START(src);
   char *result = malloc(sizeof(dst) + sizeof(src) + 1);
   int i = 0;
   int j = 0;
   int k = 0;
+  
   for (; i < 4; i++, k++) {
-      result[i] = src[k];
-    }
+    result[i] = src[k];
+  }
 
   for (; j < strlen(dst); i++, j++) {
     result[i] = dst[j];
@@ -389,6 +499,14 @@ char *istrcat(char *dst, const char *src) {
   return result;
 }
 
+///
+/// Appends n chars of the the istring src to the string dst 
+/// and updates the length.
+///
+/// @parem the destination string.
+/// @parem the istring you want to concat to dst.
+/// @parem an size_t telling how many chars you want to concat.
+/// @return a pointer to the concatted string.
 char *istrncat(char *dst, const char *src, size_t n) {
   START(src);
   char *result = malloc(sizeof(dst) + n + 1);
@@ -396,7 +514,10 @@ char *istrncat(char *dst, const char *src, size_t n) {
   int i = 0;
   int j = 0;
   int k = 0;
-
+  if (n > istrlen(src)){
+    STRING(src);
+    return istrcat(dst, src);
+  }else{
   for (; i < 4; i++, k++) {
     result[i] = src[k];
   }
@@ -404,23 +525,16 @@ char *istrncat(char *dst, const char *src, size_t n) {
   for (; j < strlen(dst); i++, j++) {
     result[i] = dst[j];
     }
-  STRING(src);
-  if (n > strlen) {
-    for (; k <= strlen(src); i++, k++) {
+    
+  for (int nummer = 0; nummer < n; nummer++, i++, k++) {
     result[i] = src[k];
   }
-  }else{
-    START(src);
-    for (int nummer = 0; nummer < n; nummer++, i++, k++)
-      {
-        result[i] = src[k];
-      }
-    //src[k] = '\0';
-    STRING(src);
+  //src[k] = '\0';
+  STRING(src);
   }
   
   istrfixlen(STRING(result));
-
+  
   return result;
 
 }

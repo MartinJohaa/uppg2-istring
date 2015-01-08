@@ -1,5 +1,6 @@
 #include <string.h>
 #include "CUnit/Basic.h"
+#include "CUnit/CUnit.h"
 #include "istring.h"
 //#include "istring_rep.h"
 #include <stdlib.h>
@@ -87,8 +88,7 @@ void testISTRCAT(void)
   CU_ASSERT(!strcmp(str6, "testingbam"));
   CU_ASSERT(istrlen(str5) == 8);
   CU_ASSERT(istrlen(str6) == 10);
-  //CU_FAIL("Test not implemented yet");
-
+  
   istring_rm(str1);
   istring_rm(str2);
   free(START(str5));
@@ -231,14 +231,31 @@ void testISTRNCMP(void)
 
 void testISTRCPY(void)
 {
-  // You must implement your own!
-  CU_FAIL("Test not implemented yet");
+  char dst[20];
+  memset(dst, 'a', sizeof(dst));
+  char dstsmall[2];
+  memset(dstsmall, 'a', sizeof(dstsmall)-1);
+  memset(dstsmall+1, '\0', 1);
+  char *src = istring_mk("spam");
+  char *temp = istrcpy(dst, src);
+  CU_ASSERT(strcmp(dst, src));
+  
+  CU_ASSERT(istrcpy(dstsmall, src) == NULL);
+  istring_rm(src);
 }
 
 void testISTRNCPY(void)
 {
-  // You must implement your own!
-  CU_FAIL("Test not implemented yet");
+  char dst[20];
+  memset(dst, 'a', sizeof(dst));
+  char dstsmall[2];
+  memset(dstsmall, 'a', sizeof(dstsmall)-1);
+  memset(dstsmall+1, '\0', 1);
+  char *src = istring_mk("spam");
+  istrncpy(dst, src, 2);
+  CU_ASSERT(strcmp(dst, "sp"));
+  CU_ASSERT(istrncpy(dstsmall, src, 2) == NULL);
+  istring_rm(src);
 }
 
 int main()
